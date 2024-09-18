@@ -131,11 +131,14 @@ class Scene:
 def main():
     pygame.init()
     surface: pygame.display = pygame.display.set_mode((LENGTH, HIGHT))
+    scene = Scene()
     keepGameRunning = True
     while keepGameRunning:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  
                 keepGameRunning = False
+        scene.update()
+        
 
 if __name__ == "__main__":
     main()
