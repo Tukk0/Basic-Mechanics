@@ -114,7 +114,7 @@ class Scene:
 
         def draw_text(surface, text, position):
             text_skin = pygame.font.SysFont('Comic Sans MS', 24).render(text, False, RED)
-            text_rect = text_skin.get_rect(center=position)
+            text_rect = text_skin.get_rect(midleft=position)
             surface.blit(text_skin, text_rect)
 
         def draw_object(surface: pygame, object, pos_x, pos_y, draw_scale=1):
@@ -127,7 +127,7 @@ class Scene:
         for i, obj in enumerate(self.obj):
             draw_object(surface, obj, obj.get_x() / X, obj.get_y() / X)
             draw_text(surface, f"Speed of obj{i} : {round(obj.v.len(), 5)}км/s",
-                      (LENGTH - 200, (i + 1) * 50))
+                      (LENGTH - 500, (i + 1) * 50))
 
         pygame.display.flip()
         pygame.display.update()
