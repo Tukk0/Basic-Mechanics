@@ -2,7 +2,10 @@ from math import sqrt
 
 import pygame
 
-from src.config import dt, G, RED, LENGTH, HIGHT, X, MIDX, MIDY, MZ, V1
+from config import dt, G, RED, LENGTH, HIGHT, X, MIDX, MIDY, MZ, V1, WHITE, GREEN
+
+
+VERBOSE = 1
 
 
 class Vector:
@@ -29,12 +32,14 @@ class Vector:
 
 class Object:
     def __init__(self, mass: int, v: Vector, x: int, y: int, image: str = "sprites/empty.png",
-                 size: int = 100) -> None:
+                 size: int = 100, name : str = "") -> None:
         self.mass: int = mass
         self.v: Vector = v
         self.x: int = x
         self.y: int = y
         self.image: int = pygame.image.load(image).convert_alpha()
+        self.size : int = size
+        self.name : str = name
         self.image = pygame.transform.scale(self.image, (size, size))
 
     def get_mass(self) -> int:
@@ -61,15 +66,24 @@ class Object:
 
     def get_skin(self):
         return self.image
+    
+    def get_name(self) -> str:
+        return self.name
+    
+    def get_size(self) -> int:
+        return self.size
 
 
 class Static(Object):
-    def __init__(self, mass: int, v: Vector, x: int, y: int, image: str = "sprites/empty.png",
-                 size: int = 100):
-        super().__init__(mass, v, x, y, image, size)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.v = Vector(0, 0)
 
+
     def move(self):
+        pass
+
+    def change_v(self, a: Vector) -> None:
         pass
 
 
@@ -84,8 +98,8 @@ class Scene:
     def __init__(self):
         # earth
         self.obj: list[Object] = [
-            Object(100, Vector(V1, 0), 0, X * 110, "sprites/sputnic.png", size=100),
-            Static(MZ, Vector(1, 1), 0, 0, "sprites/earth.png", size=100), ]
+            Object(100, Vector(V1, 0), 0, X * 110, "sprites/sputnic.png", size=100, name = "Sputnic"),
+            Static(MZ, Vector(1, 1), 0, 0, "sprites/earth.png", size=100, name = "Earth"), ]
         # self.obj: list[Object] = [
         # Object(10**12, Vector(1, 0), 0, 0, "sprites/earth.png", size=100),
         # Object(10**12,Vector(0,0), 0,100, "sprites/earth.png", size=100),
@@ -112,22 +126,36 @@ class Scene:
     def Draw(self, surface):
         surface.fill((0, 0, 0))
 
-        def draw_text(surface, text, position):
+        def draw_text(surface, text, position, align = "midleft"):
             text_skin = pygame.font.SysFont('Comic Sans MS', 24).render(text, False, RED)
-            text_rect = text_skin.get_rect(midleft=position)
+            if align == "midleft":
+                text_rect = text_skin.get_rect(midleft=position)
+            elif align == "center":
+                text_rect = text_skin.get_rect(center=position)
             surface.blit(text_skin, text_rect)
 
         def draw_object(surface: pygame, object, pos_x, pos_y, draw_scale=1):
             object_skin = object.get_skin()
-            object_rect = object_skin.get_rect(center=(pos_x + MIDX, pos_y + MIDY), )
+            object_rect = object_skin.get_rect(center=(pos_x, pos_y), )
             surface.blit(object_skin, object_rect)
 
         image = pygame.image.load("sprites/empty.png").convert_alpha()
 
         for i, obj in enumerate(self.obj):
-            draw_object(surface, obj, obj.get_x() / X, obj.get_y() / X)
-            draw_text(surface, f"Speed of obj{i} : {round(obj.v.len(), 5)}км/s",
+
+            start = (obj.get_x() / X + MIDX, obj.get_y() / X + MIDY)
+            v = Vector(obj.get_v().x,obj.get_v().y)
+            v.normilize()
+            v = v.scalar(100)
+            v.increase(Vector(start[0], start[1]))
+
+            draw_object(surface, obj, start[0], start[1])
+            draw_text(surface, f"Speed of {obj.get_name()} : {round(obj.v.len(), 0)}км/s",
                       (LENGTH - 500, (i + 1) * 50))
+            draw_text(surface, f"{obj.get_name()}", (start[0], start[1] - obj.get_size() + 20), align = "center")
+
+            if VERBOSE > 0:
+                pygame.draw.line(surface, GREEN, start, [v.x,v.y])
 
         pygame.display.flip()
         pygame.display.update()

@@ -7,11 +7,13 @@ RZ = 6378 * 10 ** 3
 
 # colors
 RED = (255, 0, 0)
+WHITE = (255,255,255)
+GREEN = (0,255,0)
 
 # Window params
 
-LENGTH = 1600
-HIGHT = 960
+LENGTH = 1920
+HIGHT = 1080
 
 # drawing const
 X = (6378 * 10 ** 3) // 100  # <- earth
