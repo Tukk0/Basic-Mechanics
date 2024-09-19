@@ -5,7 +5,7 @@ import pygame
 from config import dt, G, RED, LENGTH, HIGHT, X, MIDX, MIDY, MZ, V1, WHITE, GREEN
 
 
-VERBOSE = 1
+VERBOSE = 2
 
 
 class Vector:
@@ -41,6 +41,7 @@ class Object:
         self.size : int = size
         self.name : str = name
         self.image = pygame.transform.scale(self.image, (size, size))
+        self.last_positions = set()
 
     def get_mass(self) -> int:
         return self.mass
@@ -58,8 +59,10 @@ class Object:
         return self.y
 
     def move(self):
+        self.last_positions.add((self.x, self.y))
         self.x += self.v.x * dt
         self.y += self.v.y * dt
+
 
     def change_v(self, a: Vector) -> None:
         self.v.increase(a.scalar(dt))
@@ -72,6 +75,9 @@ class Object:
     
     def get_size(self) -> int:
         return self.size
+    
+    def get_last_positions(self) -> set[list[int,int]]:
+        return self.last_positions
 
 
 class Static(Object):
@@ -156,6 +162,9 @@ class Scene:
 
             if VERBOSE > 0:
                 pygame.draw.line(surface, GREEN, start, [v.x,v.y])
+                if VERBOSE > 1:
+                    for pos in obj.get_last_positions():
+                        pygame.draw.circle(surface, WHITE,  (pos[0] / X + MIDX, pos[1] / X + MIDY), 1)
 
         pygame.display.flip()
         pygame.display.update()
