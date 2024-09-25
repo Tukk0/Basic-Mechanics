@@ -2,7 +2,7 @@ from math import sqrt
 
 import pygame
 
-from config import dt, G, RED, LENGTH, HIGHT, X, MIDX, MIDY, MZ, V1, WHITE, GREEN
+from config import dt, G, RED, LENGTH, HIGHT, X, MIDX, MIDY, MZ, V1, V2, WHITE, GREEN, RZ
 
 
 VERBOSE = 2
@@ -102,14 +102,20 @@ def Func(object1, object2) -> Vector:
 
 class Scene:
     def __init__(self):
-        # earth
+        # First speed
         self.obj: list[Object] = [
-            Object(100, Vector(V1, 0), 0, X * 110, "sprites/sputnic.png", size=100, name = "Sputnic"),
-            Static(MZ, Vector(1, 1), 0, 0, "sprites/earth.png", size=100, name = "Earth"), ]
-        # self.obj: list[Object] = [
-        # Object(10**12, Vector(1, 0), 0, 0, "sprites/earth.png", size=100),
-        # Object(10**12,Vector(0,0), 0,100, "sprites/earth.png", size=100),
-        # Object(10**12,Vector(0,0), 100,-100, "sprites/earth.png", size=100)]
+            Object(83.6, Vector(V1, 0), 0, RZ + 160 * 10 ** 3, "sprites/sputnic.png", size=100, name = "Sputnic"),
+            Static(MZ, Vector(0, 0), 0, 0, "sprites/earth.png", size=100, name = "Earth"), ]
+        
+        # Second speed
+        #self.obj: list[Object] = [
+        #    Object(83.6, Vector(V2, 0), 0, RZ + 160 * 10 ** 3, "sprites/sputnic.png", size=100, name = "Sputnic"),
+        #    Static(MZ, Vector(0, 0), 0, 0, "sprites/earth.png", size=100, name = "Earth"), ]
+        
+        #Smth between first and second speed
+        #self.obj: list[Object] = [
+        #    Object(83.6, Vector(V2 * 0.9, 0), 0, RZ + 160 * 10 ** 3, "sprites/sputnic.png", size=100, name = "Sputnic"),
+        #    Static(MZ, Vector(0, 0), 0, 0, "sprites/earth.png", size=100, name = "Earth"), ]
         self.len = len(self.obj)
 
     def update(self, surface):
@@ -155,16 +161,23 @@ class Scene:
             v = v.scalar(100)
             v.increase(Vector(start[0], start[1]))
 
-            draw_object(surface, obj, start[0], start[1])
-            draw_text(surface, f"Speed of {obj.get_name()} : {round(obj.v.len(), 0)}км/s",
+            if VERBOSE > 0:
+                draw_object(surface, obj, start[0], start[1])
+                draw_text(surface, f"Speed of {obj.get_name()} : {round(obj.v.len(), 0)} м/s",
                       (LENGTH - 500, (i + 1) * 50))
-            draw_text(surface, f"{obj.get_name()}", (start[0], start[1] - obj.get_size() + 20), align = "center")
+                draw_text(surface, f"{obj.get_name()}", (start[0], start[1] - obj.get_size() + 20), align = "center")
+                draw_text(surface, f"Position of the {obj.get_name()} is x : {round(obj.get_x()//1000, 0)} km, y : {round(obj.get_y()//1000, 0)} km", (100, (i + 1) * 50))
+            
 
             if VERBOSE > 0:
                 pygame.draw.line(surface, GREEN, start, [v.x,v.y])
-                if VERBOSE > 1:
-                    for pos in obj.get_last_positions():
-                        pygame.draw.circle(surface, WHITE,  (pos[0] / X + MIDX, pos[1] / X + MIDY), 1)
+
+            if VERBOSE > 1:
+                for pos in obj.get_last_positions():
+                    pygame.draw.circle(surface, WHITE,  (pos[0] / X + MIDX, pos[1] / X + MIDY), 1)
+            if VERBOSE > 0:
+                pass
+
 
         pygame.display.flip()
         pygame.display.update()
@@ -180,7 +193,6 @@ def main():
             if event.type == pygame.QUIT:
                 keepGameRunning = False
         scene.update(surface)
-
 
 if __name__ == "__main__":
     main()

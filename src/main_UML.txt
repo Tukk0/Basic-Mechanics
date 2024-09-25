@@ -1,0 +1,54 @@
+@startuml
+class Vector {
+    increase()
+    scalar()
+    len()
+    normilize()
+        x
+    y
+    __init__()
+}
+class Object {
+    get_mass()
+    get_v()
+    get_xy()
+    get_x()
+    get_y()
+    move()
+    change_v()
+    get_skin()
+    get_name()
+    get_size()
+    get_last_positions()
+        mass : int 
+    v : Vector 
+    x : int 
+    y : int 
+    image : int 
+    size : int 
+    name : str 
+    image
+    last_positions
+    __init__(mass: int , v: Vector , x: int , y: int , image: int , size: int , name: str )
+}
+class Static {
+    move()
+    change_v()
+    Func()
+        v
+    __init__()
+}
+class Scene {
+    update()
+    Draw()
+    draw_text()
+    draw_object()
+    main()
+        obj : list[Object] 
+    len
+    __init__(obj: list[Object] )
+}
+Object --> Vector
+Object <|-- Static
+Scene --> Object
+@enduml
