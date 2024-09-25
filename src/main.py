@@ -1,8 +1,9 @@
 from math import sqrt
+import time
 
 import pygame
 
-from config import dt, G, RED, LENGTH, HIGHT, X, MIDX, MIDY, MZ, V1, V2, WHITE, GREEN, RZ
+from config import *
 
 
 VERBOSE = 2
@@ -103,9 +104,9 @@ def Func(object1, object2) -> Vector:
 class Scene:
     def __init__(self):
         # First speed
-        self.obj: list[Object] = [
-            Object(83.6, Vector(V1, 0), 0, RZ + 160 * 10 ** 3, "sprites/sputnic.png", size=100, name = "Sputnic"),
-            Static(MZ, Vector(0, 0), 0, 0, "sprites/earth.png", size=100, name = "Earth"), ]
+        #self.obj: list[Object] = [
+        #    Object(83.6, Vector(V1, 0), 0, RZ + 160 * 10 ** 3, "sprites/sputnic.png", size=100, name = "Sputnic"),
+        #    Static(MZ, Vector(0, 0), 0, 0, "sprites/earth.png", size=100, name = "Earth"), ]
         
         # Second speed
         #self.obj: list[Object] = [
@@ -116,7 +117,21 @@ class Scene:
         #self.obj: list[Object] = [
         #    Object(83.6, Vector(V2 * 0.9, 0), 0, RZ + 160 * 10 ** 3, "sprites/sputnic.png", size=100, name = "Sputnic"),
         #    Static(MZ, Vector(0, 0), 0, 0, "sprites/earth.png", size=100, name = "Earth"), ]
+
+        # SUN and other planets
+        self.obj: list[Object] = [
+            Object(SOLNCE, Vector(0, 0), 0, 0, "sprites/earth.png", size=100, name = "SUN"),
+            Object(MERKURY, Vector(0, V_MERKURY), D_MERKURY, 0, "sprites/sputnic.png", size=100, name = "Merkury"),
+            Object(VENERA, Vector(0, V_VENERA), D_VENERA, 0, "sprites/sputnic.png", size=100, name = "VENERA"),
+            Object(MZ, Vector(0, V_ZM), D_ZM, 0, "sprites/sputnic.png", size=100, name = "ZEMLYA"),
+            Object(MARS, Vector(0, V_MARS), D_MARS, 0, "sprites/sputnic.png", size=100, name = "MARS"),
+            Object(UPITER, Vector(0, V_UPITER), D_UPITER, 0, "sprites/sputnic.png", size=100, name = "UPITER"),
+            Object(SATURN, Vector(0, V_SATURN), D_SATURN, 0, "sprites/sputnic.png", size=100, name = "SATURN"),
+            Object(Uran, Vector(0, V_URAN), D_URAN, 0, "sprites/sputnic.png", size=100, name = "URAN"),
+            Object(NEPTUN, Vector(0, V_NEPTUN), D_NEPTUN, 0, "sprites/sputnic.png", size=100, name = "NEPTUN"), ]
         self.len = len(self.obj)
+
+        self.time = time.time()
 
     def update(self, surface):
         a = [Vector(0, 0) for i in self.obj]
@@ -133,7 +148,10 @@ class Scene:
             self.obj[i].change_v(a[i])
             self.obj[i].move()
 
-        self.Draw(surface)
+        print(f" Updating {time.time() - self.time}")
+        if time.time() - self.time > 0.1:
+            self.time = time.time() 
+            self.Draw(surface)
 
     def Draw(self, surface):
         surface.fill((0, 0, 0))
