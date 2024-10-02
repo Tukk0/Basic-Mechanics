@@ -1,7 +1,7 @@
 from math import sqrt
 
 #FIrst 3 scenes
-dt = 0.002
+dt = 2
 
 
 #PLANETS
@@ -21,8 +21,8 @@ GREEN = (0,255,0)
 
 # Window params
 
-LENGTH = 1300
-HIGHT = 800
+LENGTH = 1920
+HIGHT = 1080
 
 # drawing const
 # X = (6378 * 10 ** 3) // 100  # <- earth
@@ -32,7 +32,7 @@ HIGHT = 800
 #X = (RZ + 160 * 10 ** 3) // 100
 
 #X for planets
-X = 0.25 * 10 ** 9
+X = 0.4 * 10 ** 9
 MIDX = LENGTH / 2
 MIDY = HIGHT / 2
 
@@ -64,13 +64,15 @@ D_PLUTON = 5929 * 10 ** 9
 
 V_MERKURY = 47.8 * 10 ** 3 #m/s
 V_VENERA = 35 * 10 ** 3
-V_ZM = 29.8 * 10 ** 6
+V_ZM = 29.8 * 10 ** 3
 V_MARS = 24.1 * 10 ** 3
 V_UPITER = 13.0 * 10 ** 3
 V_SATURN = 9.6 * 10 ** 3
 V_URAN = 6.8 * 10 ** 3
 V_NEPTUN = 5.4 * 10 ** 3
 V_PLUTON = 4.7 * 10 ** 3
+
+V_LUNA = 1.023 * 10 ** 3
 
 #Buttons
 BORDER_WIDTH = 7

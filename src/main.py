@@ -143,12 +143,12 @@ class Scene:
             #Object(MERKURY, Vector(0, V_MERKURY), D_MERKURY, 0, "sputnic.png", size=100, name = "Merkury"),
             #Object(VENERA, Vector(0, V_VENERA), D_VENERA, 0, "sputnic.png", size=100, name = "VENERA"),
             Object(EARTH_M, Vector(0, V_ZM), D_ZM, 0, "earth.png", size=100, name = "ZEMLYA"),
-            #Object(7.36 * 10 ** 22, Vector(0,V_ZM), D_ZM + 384.4 * 10 ** 6, 0, "sputnic.png", size=100, name="3"),
+            Object(7.36 * 10 ** 22, Vector(-V_LUNA, V_ZM), D_ZM , + 363.4 * 10 ** 6, "sputnic.png", size=30, name="LUNA"),
             #Object(MARS, Vector(0, V_MARS), D_MARS, 0, "sputnic.png", size=100, name = "MARS"),
             #Object(UPITER, Vector(0, V_UPITER), D_UPITER, 0, "sputnic.png", size=100, name = "UPITER"),
             #Object(SATURN, Vector(0, V_SATURN), D_SATURN, 0, "sputnic.png", size=100, name = "SATURN"),
             #Object(Uran, Vector(0, V_URAN), D_URAN, 0, "sputnic.png", size=100, name = "URAN"),
-            Object(NEPTUN, Vector(0, V_NEPTUN), D_NEPTUN, 0, "sputnic.png", size=100, name = "NEPTUN"),
+            #Object(NEPTUN, Vector(0, V_NEPTUN), D_NEPTUN, 0, "sputnic.png", size=100, name = "NEPTUN"),
             ]
         self.all_energy = sum(x.get_energy() for x in self.obj)
         self.max_energy = None
@@ -193,7 +193,7 @@ class Scene:
         #else:
         #    self.min_energy = self.all_energy
         #    self.max_energy = self.all_energy
-        print(self.all_energy) #, self.min_energy, self.max_energy, self.max_energy - self.min_energy)
+        #print(self.all_energy) #, self.min_energy, self.max_energy, self.max_energy - self.min_energy)
 
 
         if time.time() - self.time > 0.1:
@@ -241,7 +241,7 @@ class Scene:
                 pygame.draw.line(surface, GREEN, start, [v.x, v.y])
 
             if VERBOSE > 1:
-                for pos in obj.get_last_positions()[::20]:
+                for pos in obj.get_last_positions()[::1000]:
                     pygame.draw.circle(surface, WHITE,  (pos[0] / X + MIDX, pos[1] / X + MIDY), 1)
             if VERBOSE > 0:
                 pass
@@ -262,9 +262,8 @@ def main():
             if event.type == pygame.QUIT:
                 keepGameRunning = False
         time +=1
-        print(f"{time * dt} c")
+        print(f"{time * dt // (3600 * 24)} дней")
         scene.update(surface)
 
-__name__ = str(input())
-if __name__ == "main":
+if __name__ == "__main__":
     main()
