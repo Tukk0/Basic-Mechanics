@@ -3,6 +3,7 @@ import time
 
 import pygame
 
+import values as vals
 from config import *
 
 
@@ -18,6 +19,7 @@ class Vector:
         self.x += a.x
         self.y += a.y
 
+    # Scalar multiplication of vectors
     def scalar(self, dt):
         return Vector(self.x * dt, self.y * dt)
 
@@ -106,7 +108,7 @@ class Static(Object):
 
 def Func(object1: Object, object2: Object, ind1: int, ind2: int) -> Vector:
     view = Vector(object2.get_x() - object1.get_x(), object2.get_y() - object1.get_y())
-    k = G * (object1.get_mass()) * (object2.get_mass()) / ((view.len()) ** 2)
+    k = vals.G * (object1.get_mass()) * (object2.get_mass()) / ((view.len()) ** 2)
     view.normilize()
     return view.scalar(k)
 
@@ -116,7 +118,7 @@ class Scene:
         # Three objects
         """
         self.obj: list[Object] = [
-            Object(EARTH_M, Vector(30 * 10 ** 6, 0), 0, D_ZM, "earth.png", size=100, name="1"),
+            Object(v.EARTH_M, Vector(30 * 10 ** 6, 0), 0, D_ZM, "earth.png", size=100, name="1"),
             Object(SOLNCE, Vector(0, 0), 0, 0, "earth.png", size=100, name="2"),
             Object(7.36 * 10 ** 22, Vector(-1e6, 0), 0, D_ZM - 384.4 * 10 ** 6, "earth.png", size=100, name="3")]
         """
@@ -125,30 +127,30 @@ class Scene:
         # First speed
         '''self.obj: list[Object] = [
             Object(83.6, Vector(V1, 0), 0, RZ + 160 * 10 ** 3, "sputnic.png", size=100, name="Sputnic"),
-            Static(EARTH_M, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
+            Static(v.EARTH_M, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
         
         # Second speed
         '''self.obj: list[Object] = [
             Object(83.6, Vector(V2, 0), 0, RZ + 160 * 10 ** 3, "sputnic.png", size=100, name="Sputnic"),
-            Static(EARTH_M, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
+            Static(v.EARTH_M, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
         
         #Smth between first and second speed
         '''self.obj: list[Object] = [
             Object(83.6, Vector(V2 * 0.9, 0), 0, RZ + 160 * 10 ** 3, "sputnic.png", size=100, name = "Sputnic"),
-            Static(EARTH_M, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
+            Static(v.EARTH_M, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
 
         # SUN and other planets
         self.obj: list[Object] = [
-            Object(SOLNCE, Vector(0, 0), 0, 0, "earth.png", size=100, name = "SUN"),
+            Object(vals.SUN_M, Vector(0, 0), 0, 0, "earth.png", size=100, name = "SUN"),
             #Object(MERKURY, Vector(0, V_MERKURY), D_MERKURY, 0, "sputnic.png", size=100, name = "Merkury"),
             #Object(VENERA, Vector(0, V_VENERA), D_VENERA, 0, "sputnic.png", size=100, name = "VENERA"),
-            Object(EARTH_M, Vector(0, V_ZM), D_ZM, 0, "earth.png", size=100, name = "ZEMLYA"),
+            Object(vals.EARTH_M, Vector(0, vals.EARTH_V), vals.EARTH_D, 0, "earth.png", size=100, name = "ZEMLYA"),
             #Object(7.36 * 10 ** 22, Vector(0,V_ZM), D_ZM + 384.4 * 10 ** 6, 0, "sputnic.png", size=100, name="3"),
             #Object(MARS, Vector(0, V_MARS), D_MARS, 0, "sputnic.png", size=100, name = "MARS"),
             #Object(UPITER, Vector(0, V_UPITER), D_UPITER, 0, "sputnic.png", size=100, name = "UPITER"),
             #Object(SATURN, Vector(0, V_SATURN), D_SATURN, 0, "sputnic.png", size=100, name = "SATURN"),
             #Object(Uran, Vector(0, V_URAN), D_URAN, 0, "sputnic.png", size=100, name = "URAN"),
-            Object(NEPTUN, Vector(0, V_NEPTUN), D_NEPTUN, 0, "sputnic.png", size=100, name = "NEPTUN"),
+            Object(vals.NEPTUNE_M, Vector(0, vals.NEPTUNE_V), vals.NEPTUNE_D, 0, "sputnic.png", size=100, name = "NEPTUN"),
             ]
         self.all_energy = sum(x.get_energy() for x in self.obj)
         self.max_energy = None
@@ -176,9 +178,9 @@ class Scene:
         view12 = Vector(self.obj[0].get_x() - self.obj[1].get_x(), self.obj[0].get_y() - self.obj[1].get_y())
         view13 = Vector(self.obj[0].get_x() - self.obj[2].get_x(), self.obj[0].get_y() - self.obj[2].get_y())
         view23 = Vector(self.obj[1].get_x() - self.obj[2].get_x(), self.obj[1].get_y() - self.obj[2].get_y())
-        self.obj[0].p_energy = - G * (self.obj[0].get_mass()) * (self.obj[1].get_mass()) / (view12.len())
-        self.obj[1].p_energy = - G * (self.obj[1].get_mass()) * (self.obj[2].get_mass()) / (view23.len())
-        self.obj[2].p_energy = - G * (self.obj[0].get_mass()) * (self.obj[2].get_mass()) / (view13.len())
+        self.obj[0].p_energy = - vals.G * (self.obj[0].get_mass()) * (self.obj[1].get_mass()) / (view12.len())
+        self.obj[1].p_energy = - vals.G * (self.obj[1].get_mass()) * (self.obj[2].get_mass()) / (view23.len())
+        self.obj[2].p_energy = - vals.G * (self.obj[0].get_mass()) * (self.obj[2].get_mass()) / (view13.len())
         #v2 = Vector(self.obj[1].v.x, self.obj[1].y)
         #v2.increase(self.obj[0].v.scalar(-1))
         #v3 = Vector(self.obj[2].v.x, self.obj[2].y)
