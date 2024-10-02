@@ -2,7 +2,7 @@ from math import sqrt
 
 #FIrst 3 scenes
 # Time difference
-dt = 2
+dt = 200
 
 #V1 = 7770 #m/s
 #V1 = sqrt(v.G*MZ / (RZ + 160 * 10 ** 3))
