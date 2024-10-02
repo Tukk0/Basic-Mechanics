@@ -1,7 +1,7 @@
 from math import sqrt
 
 #FIrst 3 scenes
-dt = 2
+dt = 0.002
 
 
 #PLANETS
@@ -29,15 +29,16 @@ HIGHT = 800
 # X = 1
 
 #X for first 3 scenes
-X = (RZ + 160 * 10 ** 3) // 100
+#X = (RZ + 160 * 10 ** 3) // 100
 
 #X for planets
-#X = 0.25 * 10 ** 9
+X = 0.25 * 10 ** 9
 MIDX = LENGTH / 2
 MIDY = HIGHT / 2
 
 
 #Masses of planets
+EARTH_M = 5.97 * 10 ** 24
 MERKURY = 3.26*10**23
 VENERA = 4.88 * 10**24
 MARS = 6.43*10**23
@@ -51,7 +52,7 @@ SOLNCE = 1983 * 10 ** 27
 #Distance between planets
 D_MERKURY = 58 * 10 ** 9
 D_VENERA = 108 * 10 ** 9
-D_ZM = 149 * 10 ** 9
+D_ZM = 150 * 10 ** 9
 D_MARS = 228 * 10 ** 9
 D_UPITER = 778 * 10 ** 9
 D_SATURN = 1426 * 10 ** 9
@@ -63,7 +64,7 @@ D_PLUTON = 5929 * 10 ** 9
 
 V_MERKURY = 47.8 * 10 ** 3 #m/s
 V_VENERA = 35 * 10 ** 3
-V_ZM = 29.8 * 10 ** 3
+V_ZM = 29.8 * 10 ** 6
 V_MARS = 24.1 * 10 ** 3
 V_UPITER = 13.0 * 10 ** 3
 V_SATURN = 9.6 * 10 ** 3

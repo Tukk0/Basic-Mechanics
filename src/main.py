@@ -114,40 +114,45 @@ def Func(object1: Object, object2: Object, ind1: int, ind2: int) -> Vector:
 class Scene:
     def __init__(self):
         # Three objects
+        """
         self.obj: list[Object] = [
-            Object(10 ** 21, Vector(10, 0), 0, RZ + 160 * 10 ** 3, "earth.png", size=100, name="1"),
-            Object(10 ** 20, Vector(0, 3), -1000 * 10 ** 3, RZ + 11600 * 10 ** 3, "earth.png", size=100, name="2"),
-            Object(10 ** 20, Vector(-10, 0), 1000 * 10 ** 3, RZ - 8400 * 10 ** 3, "earth.png", size=100, name="3")]
-        self.all_energy = sum(x.get_energy() for x in self.obj)
-        self.max_energy = None
-        self.min_energy = None
+            Object(EARTH_M, Vector(30 * 10 ** 6, 0), 0, D_ZM, "earth.png", size=100, name="1"),
+            Object(SOLNCE, Vector(0, 0), 0, 0, "earth.png", size=100, name="2"),
+            Object(7.36 * 10 ** 22, Vector(-1e6, 0), 0, D_ZM - 384.4 * 10 ** 6, "earth.png", size=100, name="3")]
+        """
+
         
         # First speed
         '''self.obj: list[Object] = [
             Object(83.6, Vector(V1, 0), 0, RZ + 160 * 10 ** 3, "sputnic.png", size=100, name="Sputnic"),
-            Static(MZ, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
+            Static(EARTH_M, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
         
         # Second speed
         '''self.obj: list[Object] = [
             Object(83.6, Vector(V2, 0), 0, RZ + 160 * 10 ** 3, "sputnic.png", size=100, name="Sputnic"),
-            Static(MZ, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
+            Static(EARTH_M, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
         
         #Smth between first and second speed
         '''self.obj: list[Object] = [
             Object(83.6, Vector(V2 * 0.9, 0), 0, RZ + 160 * 10 ** 3, "sputnic.png", size=100, name = "Sputnic"),
-            Static(MZ, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
+            Static(EARTH_M, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
 
         # SUN and other planets
-        '''self.obj: list[Object] = [
+        self.obj: list[Object] = [
             Object(SOLNCE, Vector(0, 0), 0, 0, "earth.png", size=100, name = "SUN"),
-            Object(MERKURY, Vector(0, V_MERKURY), D_MERKURY, 0, "sputnic.png", size=100, name = "Merkury"),
-            Object(VENERA, Vector(0, V_VENERA), D_VENERA, 0, "sputnic.png", size=100, name = "VENERA"),
-            Object(MZ, Vector(0, V_ZM), D_ZM, 0, "sputnic.png", size=100, name = "ZEMLYA"),
-            Object(MARS, Vector(0, V_MARS), D_MARS, 0, "sputnic.png", size=100, name = "MARS"),
-            Object(UPITER, Vector(0, V_UPITER), D_UPITER, 0, "sputnic.png", size=100, name = "UPITER"),
-            Object(SATURN, Vector(0, V_SATURN), D_SATURN, 0, "sputnic.png", size=100, name = "SATURN"),
-            Object(Uran, Vector(0, V_URAN), D_URAN, 0, "sputnic.png", size=100, name = "URAN"),
-            Object(NEPTUN, Vector(0, V_NEPTUN), D_NEPTUN, 0, "sputnic.png", size=100, name = "NEPTUN"), ]'''
+            #Object(MERKURY, Vector(0, V_MERKURY), D_MERKURY, 0, "sputnic.png", size=100, name = "Merkury"),
+            #Object(VENERA, Vector(0, V_VENERA), D_VENERA, 0, "sputnic.png", size=100, name = "VENERA"),
+            Object(EARTH_M, Vector(0, V_ZM), D_ZM, 0, "earth.png", size=100, name = "ZEMLYA"),
+            #Object(7.36 * 10 ** 22, Vector(0,V_ZM), D_ZM + 384.4 * 10 ** 6, 0, "sputnic.png", size=100, name="3"),
+            #Object(MARS, Vector(0, V_MARS), D_MARS, 0, "sputnic.png", size=100, name = "MARS"),
+            #Object(UPITER, Vector(0, V_UPITER), D_UPITER, 0, "sputnic.png", size=100, name = "UPITER"),
+            #Object(SATURN, Vector(0, V_SATURN), D_SATURN, 0, "sputnic.png", size=100, name = "SATURN"),
+            #Object(Uran, Vector(0, V_URAN), D_URAN, 0, "sputnic.png", size=100, name = "URAN"),
+            Object(NEPTUN, Vector(0, V_NEPTUN), D_NEPTUN, 0, "sputnic.png", size=100, name = "NEPTUN"),
+            ]
+        self.all_energy = sum(x.get_energy() for x in self.obj)
+        self.max_energy = None
+        self.min_energy = None
         self.len = len(self.obj)
 
         self.time = time.time()
@@ -226,8 +231,8 @@ class Scene:
                       (LENGTH - 370, (i + 1) * 50))
                 #draw_text(surface, f"Energy : {self.all_energy} J", (50, (LENGTH - 370, 4 * 50)))
                 draw_text(surface, f"{obj.get_name()}", (start[0], start[1] - obj.get_size() + 20), align = "center")
-                draw_text(surface, f"Position of the {obj.get_name()} is x : {round(obj.get_x()//1000, 0)} km, y :"
-                                   f"{round(obj.get_y()//1000, 0)} km", (50, (i + 1) * 50))
+                draw_text(surface, f"Position of the {obj.get_name()} is x : {round(obj.get_x(), 0)} m, y :"
+                                   f"{round(obj.get_y(), 0)} m", (50, (i + 1) * 50))
                 if i == 0:
                     draw_text(surface, f"Energy of system is : {self.all_energy} J", (50, (i + 4) * 50))
 
@@ -236,7 +241,7 @@ class Scene:
                 pygame.draw.line(surface, GREEN, start, [v.x, v.y])
 
             if VERBOSE > 1:
-                for pos in obj.get_last_positions()[::100]:
+                for pos in obj.get_last_positions()[::20]:
                     pygame.draw.circle(surface, WHITE,  (pos[0] / X + MIDX, pos[1] / X + MIDY), 1)
             if VERBOSE > 0:
                 pass
@@ -251,10 +256,13 @@ def main():
     surface: pygame.display = pygame.display.set_mode((LENGTH, HIGHT))
     scene = Scene()
     keepGameRunning = True
+    time = 0
     while keepGameRunning:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 keepGameRunning = False
+        time +=1
+        print(f"{time * dt} c")
         scene.update(surface)
 
 __name__ = str(input())
