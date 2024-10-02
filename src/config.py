@@ -1,11 +1,11 @@
 from math import sqrt
 
 #FIrst 3 scenes
-#dt = 3
+dt = 2
 
 
 #PLANETS
-dt = 10000
+#dt = 10000
 G = 6.674 * 10 ** (-11)
 MZ = 5_972_200_000_000_000_000_000_000 # kg
 RZ = 6378 * 10 ** 3 #m
@@ -21,23 +21,23 @@ GREEN = (0,255,0)
 
 # Window params
 
-LENGTH = 1920
-HIGHT = 1080
+LENGTH = 1300
+HIGHT = 800
 
 # drawing const
 # X = (6378 * 10 ** 3) // 100  # <- earth
 # X = 1
 
 #X for first 3 scenes
-#X = (RZ + 160 * 10 ** 3) // 100
+X = (RZ + 160 * 10 ** 3) // 100
 
 #X for planets
-X = 0.25 * 10 ** 9
+#X = 0.25 * 10 ** 9
 MIDX = LENGTH / 2
 MIDY = HIGHT / 2
 
 
-#MAsses of planets
+#Masses of planets
 MERKURY = 3.26*10**23
 VENERA = 4.88 * 10**24
 MARS = 6.43*10**23
@@ -70,3 +70,6 @@ V_SATURN = 9.6 * 10 ** 3
 V_URAN = 6.8 * 10 ** 3
 V_NEPTUN = 5.4 * 10 ** 3
 V_PLUTON = 4.7 * 10 ** 3
+
+#Buttons
+BORDER_WIDTH = 7

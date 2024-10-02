@@ -18,11 +18,14 @@ class Vector:
         self.x += a.x
         self.y += a.y
 
-    def scalar(self, dt: int):
+    def scalar(self, dt):
         return Vector(self.x * dt, self.y * dt)
 
     def len(self) -> float:
-        return sqrt(self.x ** 2 + self.y ** 2)
+        return sqrt(self.second())
+
+    def second(self) -> float:
+        return self.x ** 2 + self.y ** 2
 
     def normilize(self) -> None:
         k = self.len()
@@ -32,26 +35,28 @@ class Vector:
 
 
 class Object:
-    def __init__(self, mass: int, v: Vector, x: int, y: int, image: str = "sprites/empty.png",
-                 size: int = 100, name : str = "") -> None:
+    def __init__(self, mass: int, v: Vector, x: int, y: int, image: str = "empty.png",
+                 size: int = 100, name: str = "") -> None:
         self.mass: int = mass
         self.v: Vector = v
         self.x: int = x
         self.y: int = y
-        self.image: int = pygame.image.load(image).convert_alpha()
-        self.size : int = size
-        self.name : str = name
+        self.image = pygame.image.load(image).convert_alpha()
+        self.size: int = size
+        self.name: str = name
         self.image = pygame.transform.scale(self.image, (size, size))
+        self.k_energy = mass * v.second() / 2
+        self.p_energy = 0
         self.last_positions = []
 
     def get_mass(self) -> int:
         return self.mass
 
-    def get_v(self) -> int:
+    def get_v(self) -> Vector:
         return self.v
 
     def get_xy(self) -> list[int, int]:
-        return (self.x, self.y)
+        return self.x, self.y
 
     def get_x(self) -> int:
         return self.x
@@ -67,6 +72,8 @@ class Object:
 
     def change_v(self, a: Vector) -> None:
         self.v.increase(a.scalar(dt))
+        #update kinetic energy
+        self.k_energy = self.mass * self.v.second() / 2
 
     def get_skin(self):
         return self.image
@@ -77,8 +84,11 @@ class Object:
     def get_size(self) -> int:
         return self.size
     
-    def get_last_positions(self) -> list[list[int,int]]:
+    def get_last_positions(self) -> list[list[int, int]]:
         return self.last_positions
+
+    def get_energy(self) -> float:
+        return self.k_energy + self.p_energy
 
 
 class Static(Object):
@@ -94,7 +104,7 @@ class Static(Object):
         pass
 
 
-def Func(object1, object2) -> Vector:
+def Func(object1: Object, object2: Object, ind1: int, ind2: int) -> Vector:
     view = Vector(object2.get_x() - object1.get_x(), object2.get_y() - object1.get_y())
     k = G * (object1.get_mass()) * (object2.get_mass()) / ((view.len()) ** 2)
     view.normilize()
@@ -103,32 +113,41 @@ def Func(object1, object2) -> Vector:
 
 class Scene:
     def __init__(self):
+        # Three objects
+        self.obj: list[Object] = [
+            Object(10 ** 21, Vector(10, 0), 0, RZ + 160 * 10 ** 3, "earth.png", size=100, name="1"),
+            Object(10 ** 20, Vector(0, 3), -1000 * 10 ** 3, RZ + 11600 * 10 ** 3, "earth.png", size=100, name="2"),
+            Object(10 ** 20, Vector(-10, 0), 1000 * 10 ** 3, RZ - 8400 * 10 ** 3, "earth.png", size=100, name="3")]
+        self.all_energy = sum(x.get_energy() for x in self.obj)
+        self.max_energy = None
+        self.min_energy = None
+        
         # First speed
-        #self.obj: list[Object] = [
-        #    Object(83.6, Vector(V1, 0), 0, RZ + 160 * 10 ** 3, "sprites/sputnic.png", size=100, name = "Sputnic"),
-        #    Static(MZ, Vector(0, 0), 0, 0, "sprites/earth.png", size=100, name = "Earth"), ]
+        '''self.obj: list[Object] = [
+            Object(83.6, Vector(V1, 0), 0, RZ + 160 * 10 ** 3, "sputnic.png", size=100, name="Sputnic"),
+            Static(MZ, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
         
         # Second speed
-        #self.obj: list[Object] = [
-        #    Object(83.6, Vector(V2, 0), 0, RZ + 160 * 10 ** 3, "sprites/sputnic.png", size=100, name = "Sputnic"),
-        #    Static(MZ, Vector(0, 0), 0, 0, "sprites/earth.png", size=100, name = "Earth"), ]
+        '''self.obj: list[Object] = [
+            Object(83.6, Vector(V2, 0), 0, RZ + 160 * 10 ** 3, "sputnic.png", size=100, name="Sputnic"),
+            Static(MZ, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
         
         #Smth between first and second speed
-        #self.obj: list[Object] = [
-        #    Object(83.6, Vector(V2 * 0.9, 0), 0, RZ + 160 * 10 ** 3, "sprites/sputnic.png", size=100, name = "Sputnic"),
-        #    Static(MZ, Vector(0, 0), 0, 0, "sprites/earth.png", size=100, name = "Earth"), ]
+        '''self.obj: list[Object] = [
+            Object(83.6, Vector(V2 * 0.9, 0), 0, RZ + 160 * 10 ** 3, "sputnic.png", size=100, name = "Sputnic"),
+            Static(MZ, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
 
         # SUN and other planets
-        self.obj: list[Object] = [
-            Object(SOLNCE, Vector(0, 0), 0, 0, "sprites/earth.png", size=100, name = "SUN"),
-            Object(MERKURY, Vector(0, V_MERKURY), D_MERKURY, 0, "sprites/sputnic.png", size=100, name = "Merkury"),
-            Object(VENERA, Vector(0, V_VENERA), D_VENERA, 0, "sprites/sputnic.png", size=100, name = "VENERA"),
-            Object(MZ, Vector(0, V_ZM), D_ZM, 0, "sprites/sputnic.png", size=100, name = "ZEMLYA"),
-            Object(MARS, Vector(0, V_MARS), D_MARS, 0, "sprites/sputnic.png", size=100, name = "MARS"),
-            Object(UPITER, Vector(0, V_UPITER), D_UPITER, 0, "sprites/sputnic.png", size=100, name = "UPITER"),
-            Object(SATURN, Vector(0, V_SATURN), D_SATURN, 0, "sprites/sputnic.png", size=100, name = "SATURN"),
-            Object(Uran, Vector(0, V_URAN), D_URAN, 0, "sprites/sputnic.png", size=100, name = "URAN"),
-            Object(NEPTUN, Vector(0, V_NEPTUN), D_NEPTUN, 0, "sprites/sputnic.png", size=100, name = "NEPTUN"), ]
+        '''self.obj: list[Object] = [
+            Object(SOLNCE, Vector(0, 0), 0, 0, "earth.png", size=100, name = "SUN"),
+            Object(MERKURY, Vector(0, V_MERKURY), D_MERKURY, 0, "sputnic.png", size=100, name = "Merkury"),
+            Object(VENERA, Vector(0, V_VENERA), D_VENERA, 0, "sputnic.png", size=100, name = "VENERA"),
+            Object(MZ, Vector(0, V_ZM), D_ZM, 0, "sputnic.png", size=100, name = "ZEMLYA"),
+            Object(MARS, Vector(0, V_MARS), D_MARS, 0, "sputnic.png", size=100, name = "MARS"),
+            Object(UPITER, Vector(0, V_UPITER), D_UPITER, 0, "sputnic.png", size=100, name = "UPITER"),
+            Object(SATURN, Vector(0, V_SATURN), D_SATURN, 0, "sputnic.png", size=100, name = "SATURN"),
+            Object(Uran, Vector(0, V_URAN), D_URAN, 0, "sputnic.png", size=100, name = "URAN"),
+            Object(NEPTUN, Vector(0, V_NEPTUN), D_NEPTUN, 0, "sputnic.png", size=100, name = "NEPTUN"), ]'''
         self.len = len(self.obj)
 
         self.time = time.time()
@@ -140,13 +159,37 @@ class Scene:
             for j in range(i + 1, self.len):
                 obj1 = self.obj[i]
                 obj2 = self.obj[j]
-                F = Func(obj1, obj2)
-                a[i].increase(F.scalar(1 / obj1.get_mass()))
-                a[j].increase(F.scalar(-1 / obj2.get_mass()))
+                F = Func(obj1, obj2, i, j)
+                a[i].increase(F.scalar(1/obj1.get_mass()))
+                a[j].increase(F.scalar(-1/obj2.get_mass()))
 
         for i in range(self.len):
             self.obj[i].change_v(a[i])
             self.obj[i].move()
+
+        # update energy
+        view12 = Vector(self.obj[0].get_x() - self.obj[1].get_x(), self.obj[0].get_y() - self.obj[1].get_y())
+        view13 = Vector(self.obj[0].get_x() - self.obj[2].get_x(), self.obj[0].get_y() - self.obj[2].get_y())
+        view23 = Vector(self.obj[1].get_x() - self.obj[2].get_x(), self.obj[1].get_y() - self.obj[2].get_y())
+        self.obj[0].p_energy = - G * (self.obj[0].get_mass()) * (self.obj[1].get_mass()) / (view12.len())
+        self.obj[1].p_energy = - G * (self.obj[1].get_mass()) * (self.obj[2].get_mass()) / (view23.len())
+        self.obj[2].p_energy = - G * (self.obj[0].get_mass()) * (self.obj[2].get_mass()) / (view13.len())
+        #v2 = Vector(self.obj[1].v.x, self.obj[1].y)
+        #v2.increase(self.obj[0].v.scalar(-1))
+        #v3 = Vector(self.obj[2].v.x, self.obj[2].y)
+        #v3.increase(self.obj[0].v.scalar(-1))
+        self.obj[0].k_energy = self.obj[0].get_mass() * (self.obj[0].get_v().second()) / 2
+        self.obj[1].k_energy = self.obj[1].get_mass() * (self.obj[1].get_v().second())/2
+        self.obj[2].k_energy = self.obj[2].get_mass() * (self.obj[2].get_v().second())/2
+        self.all_energy = sum(x.get_energy() for x in self.obj)
+        #if self.min_energy != None:
+        #    self.min_energy = min(self.all_energy, self.min_energy)
+        #    self.max_energy = max(self.all_energy, self.max_energy)
+        #else:
+        #    self.min_energy = self.all_energy
+        #    self.max_energy = self.all_energy
+        print(self.all_energy) #, self.min_energy, self.max_energy, self.max_energy - self.min_energy)
+
 
         if time.time() - self.time > 0.1:
             self.time = time.time() 
@@ -157,10 +200,9 @@ class Scene:
 
         def draw_text(surface, text, position, align = "midleft"):
             text_skin = pygame.font.SysFont('Comic Sans MS', 24).render(text, False, RED)
+            text_rect = text_skin.get_rect(center=position)
             if align == "midleft":
                 text_rect = text_skin.get_rect(midleft=position)
-            elif align == "center":
-                text_rect = text_skin.get_rect(center=position)
             surface.blit(text_skin, text_rect)
 
         def draw_object(surface: pygame, object, pos_x, pos_y, draw_scale=1):
@@ -168,12 +210,12 @@ class Scene:
             object_rect = object_skin.get_rect(center=(pos_x, pos_y), )
             surface.blit(object_skin, object_rect)
 
-        image = pygame.image.load("sprites/empty.png").convert_alpha()
+        image = pygame.image.load("empty.png").convert_alpha()
 
         for i, obj in enumerate(self.obj):
 
             start = (obj.get_x() / X + MIDX, obj.get_y() / X + MIDY)
-            v = Vector(obj.get_v().x,obj.get_v().y)
+            v = Vector(obj.get_v().x, obj.get_v().y)
             v.normilize()
             v = v.scalar(100)
             v.increase(Vector(start[0], start[1]))
@@ -181,13 +223,17 @@ class Scene:
             if VERBOSE > 0:
                 draw_object(surface, obj, start[0], start[1])
                 draw_text(surface, f"Speed of {obj.get_name()} : {round(obj.v.len(), 0)} м/s",
-                      (LENGTH - 500, (i + 1) * 50))
+                      (LENGTH - 370, (i + 1) * 50))
+                #draw_text(surface, f"Energy : {self.all_energy} J", (50, (LENGTH - 370, 4 * 50)))
                 draw_text(surface, f"{obj.get_name()}", (start[0], start[1] - obj.get_size() + 20), align = "center")
-                draw_text(surface, f"Position of the {obj.get_name()} is x : {round(obj.get_x()//1000, 0)} km, y : {round(obj.get_y()//1000, 0)} km", (100, (i + 1) * 50))
-            
+                draw_text(surface, f"Position of the {obj.get_name()} is x : {round(obj.get_x()//1000, 0)} km, y :"
+                                   f"{round(obj.get_y()//1000, 0)} km", (50, (i + 1) * 50))
+                if i == 0:
+                    draw_text(surface, f"Energy of system is : {self.all_energy} J", (50, (i + 4) * 50))
+
 
             if VERBOSE > 0:
-                pygame.draw.line(surface, GREEN, start, [v.x,v.y])
+                pygame.draw.line(surface, GREEN, start, [v.x, v.y])
 
             if VERBOSE > 1:
                 for pos in obj.get_last_positions()[::100]:
@@ -211,5 +257,6 @@ def main():
                 keepGameRunning = False
         scene.update(surface)
 
-if __name__ == "__main__":
+__name__ = str(input())
+if __name__ == "main":
     main()
