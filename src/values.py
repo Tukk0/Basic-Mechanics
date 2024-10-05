@@ -15,6 +15,7 @@ SATURN_M = 5.685 * 10 ** 26
 URANUS_M = 8.685 * 10 ** 25
 NEPTUNE_M = 10 ** 26
 SUN_M = 2 * 10 ** 30
+MOON_M = 7.35 * 10 ** 22
 
 ######################################################################
 #                              Sizes                                 #
@@ -29,6 +30,7 @@ SATURN_R = 60.3 * 10 ** 6
 URANUS_R = 25.56 * 10 ** 6
 NEPTUNE_R = 24.76 * 10 ** 6
 SUN_R = 7 * 10 ** 8
+MOON_R = 1.74 * 10 ** 6
 
 ######################################################################
 #                          Velocities                                #
@@ -42,6 +44,7 @@ JUPITER_V = 13 * 10 ** 3
 SATURN_V = 9.7 * 10 ** 3
 URANUS_V = 6.8 * 10 ** 3
 NEPTUNE_V = 5.4 * 10 ** 3
+MOON_V = EARTH_V + 10 ** 6
 
 ######################################################################
 #                          Distances                                 #
@@ -55,10 +58,25 @@ JUPITER_D = 778 * 10 ** 9
 SATURN_D = 1429 * 10 ** 9
 URANUS_D = 2875 * 10 ** 9
 NEPTUNE_D = 4497 * 10 ** 9
+MOON_D = EARTH_D + 385 * 10 ** 6
 
 ######################################################################
-#                           Constants                                #
+#                       Physical Constants                           #
 ######################################################################
 # Universal gravitational constant (in m^3/kg*s^2)
 G = 6.67 * 10 ** -11
+
+######################################################################
+#                             Names                                  #
+######################################################################
+SUN_NAME = "Sun"
+MERCURY_NAME = "Mercury"
+VENUS_NAME = "Venera"
+MARS_NAME = "Mars"
+EARTH_NAME = "Earth"
+MOON_NAME = "Moon"
+JUPITER_NAME = "Jupiter"
+SATURN_NAME = "Saturn"
+URANUS_NAME = "Uranus"
+NEPTUNE_NAME = "Neptune"
 

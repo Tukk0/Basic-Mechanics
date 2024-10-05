@@ -145,7 +145,7 @@ class Scene:
             #Object(vals.MERCURY_M, Vector(0, vals.MERCURY_V), vals.MERCURY_D, 0, "sputnic.png", img_size=100, name = vals.MERCURY_NAME),
             #Object(vals.VENUS_M, Vector(0, vals.VENUS_V), vals.VENUS_D, 0, "sputnic.png", img_size=100, name = vals.VENUS_NAME),
             Object(vals.EARTH_M, Vector(0, vals.EARTH_V), vals.EARTH_D, 0, "earth.png", img_size=100, name = vals.EARTH_NAME),
-            Object(vals.MOON_M, Vector(0, vals.MOON_V), vals.MOON_D, 0, "sputnic.png", img_size=100, name = vals.MOON_NAME),
+            Object(vals.MOON_M, Vector(0, vals.MOON_V), vals.MOON_D, 0, "moon.png", img_size=100, name = vals.MOON_NAME),
             #Object(vals.MARS_M, Vector(0, vals.MARS_V), vals.MARS_D, 0, "sputnic.png", img_size=100, name = vals.MARS_NAME),
             #Object(vals.JUPITER_M, Vector(0, vals.JUPITER_V), vals.JUPITER_D, 0, "sputnic.png", img_size=100, name = vals.JUPITER_NAME),
             #Object(vals.SATURN_M, Vector(0, vals.SATURN_V), vals.SATURN_D, 0, "sputnic.png", img_size=100, name = vals.SATURN_NAME),
@@ -200,19 +200,21 @@ class Scene:
         self.total_energy = sum(x.get_energy() for x in self.obj)
 
         if time.time() - self.time > 0.1:
-            self.time = time.time() 
-            self.Draw(surface)
+            self.time = time.time()
+            self.draw(surface)
 
-    def Draw(self, surface):
+    def draw(self, surface):
         surface.fill((0, 0, 0))
 
+        # Add textual information onto the screen
         def draw_text(surface, text, position, align = "midleft"):
-            text_skin = pygame.font.SysFont('Comic Sans MS', 24).render(text, False, RED)
+            text_skin = pygame.font.SysFont('Comic Sans MS', TEXT_SIZE).render(text, False, TEXT_COLOR)
             text_rect = text_skin.get_rect(center=position)
             if align == "midleft":
                 text_rect = text_skin.get_rect(midleft=position)
             surface.blit(text_skin, text_rect)
 
+        # Add graphical information onto the screen
         def draw_object(surface: pygame, object, pos_x, pos_y, draw_scale=1):
             object_skin = object.get_skin()
             object_rect = object_skin.get_rect(center=(pos_x, pos_y), )
@@ -221,7 +223,6 @@ class Scene:
         image = pygame.image.load("empty.png").convert_alpha()
 
         for i, obj in enumerate(self.obj):
-
             start = (obj.get_x() / X + MIDX, obj.get_y() / X + MIDY)
             v = Vector(obj.get_velocity().x, obj.get_velocity().y)
             v.normalize()
@@ -237,7 +238,8 @@ class Scene:
                 draw_text(surface, f"Position of the {obj.get_name()} is x : {round(obj.get_x(), 0)} m, y :"
                                    f"{round(obj.get_y(), 0)} m", (50, (i + 1) * 50))
                 if i == 0:
-                    draw_text(surface, f"Energy of system is : {self.total_energy} J", (50, (i + 4) * 50))
+                    draw_text(surface, f"Energy of system is : {self.total_energy} J",
+                              (50, (1 + self.system_size) * 50))
 
 
             if VERBOSE > 0:
@@ -248,7 +250,6 @@ class Scene:
                     pygame.draw.circle(surface, WHITE,  (pos[0] / X + MIDX, pos[1] / X + MIDY), 1)
             if VERBOSE > 0:
                 pass
-
 
         pygame.display.flip()
         pygame.display.update()
@@ -265,7 +266,7 @@ def main():
             if event.type == pygame.QUIT:
                 keepGameRunning = False
         time +=1
-        print(f"{time * dt} c")
+        # print(f"{time * dt} c")
         scene.update(surface)
 
 __name__ = str(input())
