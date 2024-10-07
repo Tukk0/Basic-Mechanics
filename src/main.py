@@ -199,6 +199,7 @@ class Scene:
         # Update total energy
         self.total_energy = sum(x.get_energy() for x in self.obj)
 
+
         if time.time() - self.time > 0.1:
             self.time = time.time()
             self.draw(surface)
@@ -246,7 +247,7 @@ class Scene:
                 pygame.draw.line(surface, GREEN, start, [v.x, v.y])
 
             if VERBOSE > 1:
-                for pos in obj.get_last_positions()[::20]:
+                for pos in obj.get_last_positions()[::1000]:
                     pygame.draw.circle(surface, WHITE,  (pos[0] / X + MIDX, pos[1] / X + MIDY), 1)
             if VERBOSE > 0:
                 pass
@@ -269,6 +270,5 @@ def main():
         # print(f"{time * dt} c")
         scene.update(surface)
 
-__name__ = str(input())
-if __name__ == "main":
+if __name__ == "__main__":
     main()

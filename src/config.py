@@ -1,6 +1,5 @@
 from math import sqrt
 
-#FIrst 3 scenes
 # Time difference
 dt = 0.01
 
@@ -20,6 +19,7 @@ HIGHT = 800 # 1080
 # Drawing configuration
 TEXT_SIZE = 20
 TEXT_COLOR = WHITE
+
 
 # X = (6378 * 10 ** 3) // 100  # <- earth
 # X = 1
