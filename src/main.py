@@ -9,6 +9,7 @@ from config import *
 
 VERBOSE = 2
 
+coefficient = 1
 
 class Vector:
     def __init__(self, x: int, y: int) -> None:
@@ -69,8 +70,8 @@ class Object:
 
     def move(self):
         self.last_positions.append((self.x, self.y))
-        self.x += self.velocity.x * dt
-        self.y += self.velocity.y * dt
+        self.x += self.velocity.x * coefficient * dt
+        self.y += self.velocity.y * coefficient * dt
 
     def change_velocity(self, a: Vector) -> None:
         # The formula for updated velocity is v = v0 + a*dt
@@ -111,7 +112,7 @@ def Gravitational_force(object1: Object, object2: Object) -> Vector:
     # Get the directional vector of the gravitational force between objects
     direction = Vector(object2.get_x() - object1.get_x(), object2.get_y() - object1.get_y())
     # Find the magnitude of the force
-    gravitational_force = vals.G * (object1.get_mass()) * (object2.get_mass()) / ((direction.length()) ** 2)
+    gravitational_force = vals.G * (object1.get_mass()) * (object2.get_mass()) / (direction.square())
     # Normalize the vector
     direction.normalize()
     # Return the vector with the proper magnitude
@@ -121,12 +122,12 @@ def Gravitational_force(object1: Object, object2: Object) -> Vector:
 class Scene:
     def __init__(self):
         # Three objects
-        """
+        '''
         self.obj: list[Object] = [
             Object(v.EARTH_M, Vector(30 * 10 ** 6, 0), 0, D_ZM, "earth.png", size=100, name="1"),
             Object(SOLNCE, Vector(0, 0), 0, 0, "earth.png", size=100, name="2"),
             Object(7.36 * 10 ** 22, Vector(-1e6, 0), 0, D_ZM - 384.4 * 10 ** 6, "earth.png", size=100, name="3")]
-        """
+        '''
         # First cosmic speed
         '''self.obj: list[Object] = [
             Object(83.6, Vector(V1, 0), 0, RZ + 160 * 10 ** 3, "sputnic.png", size=100, name="Sputnic"),
@@ -141,11 +142,11 @@ class Scene:
             Static(v.EARTH_M, Vector(0, 0), 0, 0, "earth.png", size=100, name="Earth"), ]'''
         # Space objects
         self.obj: list[Object] = [
-            Object(vals.SUN_M, Vector(0, 0), 0, 0, "sun.png", img_size=100, name = vals.SUN_NAME),
+            Object(vals.SUN_M, Vector(0, 0), 0, 0, "sun.png", img_size=100, name=vals.SUN_NAME),
             #Object(vals.MERCURY_M, Vector(0, vals.MERCURY_V), vals.MERCURY_D, 0, "sputnic.png", img_size=100, name = vals.MERCURY_NAME),
             #Object(vals.VENUS_M, Vector(0, vals.VENUS_V), vals.VENUS_D, 0, "sputnic.png", img_size=100, name = vals.VENUS_NAME),
-            Object(vals.EARTH_M, Vector(0, vals.EARTH_V), vals.EARTH_D, 0, "earth.png", img_size=100, name = vals.EARTH_NAME),
-            Object(vals.MOON_M, Vector(0, vals.MOON_V), vals.MOON_D, 0, "moon.png", img_size=100, name = vals.MOON_NAME),
+            Object(vals.EARTH_M, Vector(0, vals.EARTH_V), vals.EARTH_D, 0, "earth.png", img_size=100, name=vals.EARTH_NAME),
+            Object(vals.MOON_M, Vector(vals.MOON_V, vals.EARTH_V), vals.EARTH_D, -vals.MOON_EARTH_D, "moon.png", img_size=40, name=vals.MOON_NAME),
             #Object(vals.MARS_M, Vector(0, vals.MARS_V), vals.MARS_D, 0, "sputnic.png", img_size=100, name = vals.MARS_NAME),
             #Object(vals.JUPITER_M, Vector(0, vals.JUPITER_V), vals.JUPITER_D, 0, "sputnic.png", img_size=100, name = vals.JUPITER_NAME),
             #Object(vals.SATURN_M, Vector(0, vals.SATURN_V), vals.SATURN_D, 0, "sputnic.png", img_size=100, name = vals.SATURN_NAME),
@@ -163,7 +164,7 @@ class Scene:
 
     def update(self, surface):
         # Create an acceleration vector for every object in the system
-        accelerations_list = [Vector(0, 0) for i in self.obj]
+        accelerations_list = [Vector(0, 0) for i in range(self.system_size)]
         # Calculate all the accelerations of the objects in the system
         for i in range(self.system_size):
             for j in range(i + 1, self.system_size):
@@ -208,7 +209,7 @@ class Scene:
         surface.fill((0, 0, 0))
 
         # Add textual information onto the screen
-        def draw_text(surface, text, position, align = "midleft"):
+        def draw_text(surface, text, position, align="midleft"):
             text_skin = pygame.font.SysFont('Comic Sans MS', TEXT_SIZE).render(text, False, TEXT_COLOR)
             text_rect = text_skin.get_rect(center=position)
             if align == "midleft":
@@ -266,7 +267,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 keepGameRunning = False
-        time +=1
+        time += 1
         # print(f"{time * dt} c")
         scene.update(surface)
 

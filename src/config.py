@@ -1,7 +1,5 @@
 from math import sqrt
-
-# Time difference
-dt = 0.01
+import values as vals
 
 #V1 = 7770 #m/s
 #V1 = sqrt(v.G*MZ / (RZ + 160 * 10 ** 3))
@@ -34,3 +32,11 @@ MIDY = HIGHT / 2
 
 #Buttons
 BORDER_WIDTH = 7
+
+# for nondimensionalization
+FOR_DISTANCE = 1 / (vals.EARTH_R * 90)
+V1 = sqrt(vals.G * vals.EARTH_M / vals.EARTH_R)
+FOR_TIME = V1 / vals.EARTH_R
+
+# Time difference
+dt = 5
