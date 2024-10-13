@@ -178,10 +178,11 @@ class Scene:
         self.time = time.time()
 
         # Buttons
-
         self.buttons = []
-
         self.construct_buttons()
+
+        #SYSTEM OF COORDINATES
+        self.focuse_obj = 0
 
     def construct_buttons(self) -> None:
         for i, obj in enumerate(self.obj):
@@ -191,6 +192,7 @@ class Scene:
                        handle_func=self.focuse_on_object, object=obj))
 
     def focuse_on_object(self, object : Object) -> None:
+        self.focuse_obj = self.obj.index(object)
         print(object.get_name())
 
     def update(self, surface):
@@ -257,7 +259,10 @@ class Scene:
         image = pygame.image.load("empty.png").convert_alpha()
 
         for i, obj in enumerate(self.obj):
-            start = (obj.get_x() / X + MIDX, obj.get_y() / X + MIDY)
+            focuse_pos = self.obj[self.focuse_obj].get_xy()
+            system_coord = (MIDX - focuse_pos[0] // X , MIDY - focuse_pos[1] // X)
+
+            start = (obj.get_x() / X  + system_coord[0], obj.get_y() / X + system_coord[1])
             v = Vector(obj.get_velocity().x, obj.get_velocity().y)
             v.normalize()
             v = v.resize(100)
@@ -283,7 +288,7 @@ class Scene:
 
             if VERBOSE > 1:
                 for pos in obj.get_last_positions():
-                    pygame.draw.circle(surface, WHITE, (pos[0] / X + MIDX, pos[1] / X + MIDY), 1)
+                    pygame.draw.circle(surface, WHITE, (pos[0] / X + system_coord[0] , pos[1] / X + system_coord[1]), 1)
             if VERBOSE > 0:
                 pass
 
