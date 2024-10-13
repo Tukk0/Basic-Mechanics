@@ -1,15 +1,13 @@
-from math import sqrt
 import time
 
 import pygame
 
-import values as vals
 from config import *
-
 
 VERBOSE = 2
 
 coefficient = 1
+
 
 class Vector:
     def __init__(self, x: int, y: int) -> None:
@@ -50,8 +48,9 @@ class Object:
         self.img_size: int = img_size
         self.image = pygame.transform.scale(self.image, (img_size, img_size))
         self.k_energy = mass * velocity.square() / 2
-        self.p_energy = 0
-        self.last_positions = []
+        self.p_energy : float = 0
+        self.last_positions : list[tuple[float, float]] = []
+        self.last_pos : float = 0
 
     def get_mass(self) -> int:
         return self.mass
@@ -65,13 +64,20 @@ class Object:
     def get_y(self) -> int:
         return self.y
 
-    def get_xy(self) -> list[int, int]:
+    def get_xy(self) -> tuple[int, int]:
         return self.x, self.y
 
     def move(self):
-        self.last_positions.append((self.x, self.y))
+        self.add_position((self.x, self.y))
         self.x += self.velocity.x * coefficient * dt
         self.y += self.velocity.y * coefficient * dt
+
+    def add_position(self, position: tuple[float, float]) -> None:
+        self.last_pos += 1
+        k = 100000
+        if self.last_pos % k == 0:
+            self.last_pos = self.last_pos % k
+            self.last_positions.append(position)
 
     def change_velocity(self, a: Vector) -> None:
         # The formula for updated velocity is v = v0 + a*dt
@@ -81,19 +87,20 @@ class Object:
 
     def get_skin(self):
         return self.image
-    
+
     def get_name(self) -> str:
         return self.name
-    
+
     def get_size(self) -> int:
         return self.img_size
 
     # Return a list of all positions the object has been through
-    def get_last_positions(self) -> list[list[int, int]]:
+    def get_last_positions(self) -> list[tuple[int, int]]:
         return self.last_positions
 
     def get_energy(self) -> float:
         return self.k_energy + self.p_energy
+
 
 # An object that does not move
 class Static(Object):
@@ -112,7 +119,8 @@ def Gravitational_force(object1: Object, object2: Object) -> Vector:
     # Get the directional vector of the gravitational force between objects
     direction = Vector(object2.get_x() - object1.get_x(), object2.get_y() - object1.get_y())
     # Find the magnitude of the force
-    gravitational_force = vals.G * (object1.get_mass()) * (object2.get_mass()) / (direction.square())
+    gravitational_force = vals.G * (object1.get_mass()) * (object2.get_mass()) / (
+        direction.square())
     # Normalize the vector
     direction.normalize()
     # Return the vector with the proper magnitude
@@ -143,16 +151,22 @@ class Scene:
         # Space objects
         self.obj: list[Object] = [
             Object(vals.SUN_M, Vector(0, 0), 0, 0, "sun.png", img_size=100, name=vals.SUN_NAME),
-            #Object(vals.MERCURY_M, Vector(0, vals.MERCURY_V), vals.MERCURY_D, 0, "sputnic.png", img_size=100, name = vals.MERCURY_NAME),
-            #Object(vals.VENUS_M, Vector(0, vals.VENUS_V), vals.VENUS_D, 0, "sputnic.png", img_size=100, name = vals.VENUS_NAME),
-            Object(vals.EARTH_M, Vector(0, vals.EARTH_V), vals.EARTH_D, 0, "earth.png", img_size=100, name=vals.EARTH_NAME),
-            Object(vals.MOON_M, Vector(vals.MOON_V, vals.EARTH_V), vals.EARTH_D, -vals.MOON_EARTH_D, "moon.png", img_size=40, name=vals.MOON_NAME),
-            #Object(vals.MARS_M, Vector(0, vals.MARS_V), vals.MARS_D, 0, "sputnic.png", img_size=100, name = vals.MARS_NAME),
-            #Object(vals.JUPITER_M, Vector(0, vals.JUPITER_V), vals.JUPITER_D, 0, "sputnic.png", img_size=100, name = vals.JUPITER_NAME),
-            #Object(vals.SATURN_M, Vector(0, vals.SATURN_V), vals.SATURN_D, 0, "sputnic.png", img_size=100, name = vals.SATURN_NAME),
-            #Object(vals.URANUS_M, Vector(0, vals.URANUS_V), vals.URANUS_D, 0, "sputnic.png", img_size=100, name = vals.URANUS_NAME),
-            #Object(vals.NEPTUNE_M, Vector(0, vals.NEPTUNE_V), vals.NEPTUNE_D, 0, "sputnic.png", img_size=100, name = vals.NEPTUNE_NAME),
-            ]
+            # Object(vals.MERCURY_M, Vector(0, vals.MERCURY_V), vals.MERCURY_D, 0, "sputnic.png", img_size=100, name = vals.MERCURY_NAME),
+            # Object(vals.VENUS_M, Vector(0, vals.VENUS_V), vals.VENUS_D, 0, "sputnic.png", img_size=100, name = vals.VENUS_NAME),
+            Object(vals.EARTH_M, Vector(0, vals.EARTH_V), vals.EARTH_D, 0, "earth.png",
+                   img_size=100, name=vals.EARTH_NAME),
+            Object(vals.MOON_M, Vector(vals.MOON_V, vals.EARTH_V), vals.EARTH_D, -vals.MOON_EARTH_D,
+                   "moon.png", img_size=40, name=vals.MOON_NAME),
+            # Object(vals.MARS_M, Vector(0, vals.MARS_V), vals.MARS_D, 0, "sputnic.png",
+            # img_size=100, name = vals.MARS_NAME), Object(vals.JUPITER_M, Vector(0,
+            # vals.JUPITER_V), vals.JUPITER_D, 0, "sputnic.png", img_size=100,
+            # name = vals.JUPITER_NAME), Object(vals.SATURN_M, Vector(0, vals.SATURN_V),
+            # vals.SATURN_D, 0, "sputnic.png", img_size=100, name = vals.SATURN_NAME),
+            # Object(vals.URANUS_M, Vector(0, vals.URANUS_V), vals.URANUS_D, 0, "sputnic.png",
+            # img_size=100, name = vals.URANUS_NAME), Object(vals.NEPTUNE_M, Vector(0,
+            # vals.NEPTUNE_V), vals.NEPTUNE_D, 0, "sputnic.png", img_size=100,
+            # name = vals.NEPTUNE_NAME),
+        ]
         # The total energy of the system
         self.total_energy = sum(x.get_energy() for x in self.obj)
         self.max_energy = None
@@ -173,9 +187,9 @@ class Scene:
                 F = Gravitational_force(obj1, obj2)
                 # The formula for acceleration is a = F / m
                 # We add vectors, since acceleration is a sum of vectors
-                accelerations_list[i].add(F.resize(1/obj1.get_mass()))
+                accelerations_list[i].add(F.resize(1 / obj1.get_mass()))
                 # Two interacting objects have opposingly directed forces
-                accelerations_list[j].add(F.resize(-1/obj2.get_mass()))
+                accelerations_list[j].add(F.resize(-1 / obj2.get_mass()))
         # Update the positions of all the objects in the system
         for i in range(self.system_size):
             # Update the velocity
@@ -191,7 +205,8 @@ class Scene:
                 obj1 = self.obj[i]
                 obj2 = self.obj[j]
                 direction = Vector(obj1.get_x() - obj2.get_x(), obj1.get_y() - obj2.get_y())
-                potential_energy = -vals.G * (obj1.get_mass()) * (obj2.get_mass()) / direction.length()
+                potential_energy = -vals.G * (obj1.get_mass()) * (
+                    obj2.get_mass()) / direction.length()
                 obj1.p_energy += potential_energy
                 obj2.p_energy += potential_energy
         # Update objects` kinetic energies
@@ -200,8 +215,7 @@ class Scene:
         # Update total energy
         self.total_energy = sum(x.get_energy() for x in self.obj)
 
-
-        if time.time() - self.time > 0.1:
+        if time.time() - self.time > 1:
             self.time = time.time()
             self.draw(surface)
 
@@ -210,7 +224,8 @@ class Scene:
 
         # Add textual information onto the screen
         def draw_text(surface, text, position, align="midleft"):
-            text_skin = pygame.font.SysFont('Comic Sans MS', TEXT_SIZE).render(text, False, TEXT_COLOR)
+            text_skin = pygame.font.SysFont('Comic Sans MS', TEXT_SIZE).render(text, False,
+                                                                               TEXT_COLOR)
             text_rect = text_skin.get_rect(center=position)
             if align == "midleft":
                 text_rect = text_skin.get_rect(midleft=position)
@@ -233,23 +248,25 @@ class Scene:
 
             if VERBOSE > 0:
                 draw_object(surface, obj, start[0], start[1])
-                draw_text(surface, f"Speed of {obj.get_name()} : {round(obj.velocity.length(), 0)} м/s",
-                      (LENGTH - 370, (i + 1) * 50))
-                #draw_text(surface, f"Energy : {self.total_energy} J", (50, (LENGTH - 370, 4 * 50)))
-                draw_text(surface, f"{obj.get_name()}", (start[0], start[1] - obj.get_size() + 20), align = "center")
-                draw_text(surface, f"Position of the {obj.get_name()} is x : {round(obj.get_x(), 0)} m, y :"
-                                   f"{round(obj.get_y(), 0)} m", (50, (i + 1) * 50))
+                draw_text(surface,
+                          f"Speed of {obj.get_name()} : {round(obj.velocity.length(), 0)} м/s",
+                          (LENGTH - 370, (i + 1) * 50))
+                # draw_text(surface, f"Energy : {self.total_energy} J", (50, (LENGTH - 370, 4 * 50)))
+                draw_text(surface, f"{obj.get_name()}", (start[0], start[1] - obj.get_size() + 20),
+                          align="center")
+                draw_text(surface,
+                          f"Position of the {obj.get_name()} is x : {round(obj.get_x(), 0)} m, y :"
+                          f"{round(obj.get_y(), 0)} m", (50, (i + 1) * 50))
                 if i == 0:
                     draw_text(surface, f"Energy of system is : {self.total_energy} J",
                               (50, (1 + self.system_size) * 50))
-
 
             if VERBOSE > 0:
                 pygame.draw.line(surface, GREEN, start, [v.x, v.y])
 
             if VERBOSE > 1:
-                for pos in obj.get_last_positions()[::1000]:
-                    pygame.draw.circle(surface, WHITE,  (pos[0] / X + MIDX, pos[1] / X + MIDY), 1)
+                for pos in obj.get_last_positions():
+                    pygame.draw.circle(surface, WHITE, (pos[0] / X + MIDX, pos[1] / X + MIDY), 1)
             if VERBOSE > 0:
                 pass
 
@@ -270,6 +287,7 @@ def main():
         time += 1
         # print(f"{time * dt} c")
         scene.update(surface)
+
 
 if __name__ == "__main__":
     main()

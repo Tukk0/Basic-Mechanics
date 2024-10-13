@@ -82,4 +82,3 @@ JUPITER_NAME = "Jupiter"
 SATURN_NAME = "Saturn"
 URANUS_NAME = "Uranus"
 NEPTUNE_NAME = "Neptune"
-
