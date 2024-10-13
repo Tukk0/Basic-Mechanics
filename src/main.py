@@ -183,6 +183,7 @@ class Scene:
 
         #SYSTEM OF COORDINATES
         self.focuse_obj = 0
+        self.zoom = X
 
     def construct_buttons(self) -> None:
         for i, obj in enumerate(self.obj):
@@ -190,6 +191,25 @@ class Scene:
                 Button(x_coord=0, y_coord= HIGHT - 110 - i * 110, width=100, height=100, text=obj.get_name(),
                        color_fore=BLACK, color_back=BLACK, hover_color_fore=RED,
                        handle_func=self.focuse_on_object, object=obj))
+        self.buttons.append(Button(x_coord=LENGTH - 110, y_coord= HIGHT - 110, width=100, height=100, text="x10",
+                       color_fore=BLACK, color_back=BLACK, hover_color_fore=RED,
+                       handle_func=self.increase_zoom, coefficient = 10))
+        self.buttons.append(
+            Button(x_coord=LENGTH - 220, y_coord=HIGHT - 110, width=100, height=100, text="x2",
+                   color_fore=BLACK, color_back=BLACK, hover_color_fore=RED,
+                   handle_func=self.increase_zoom, coefficient=2))
+        self.buttons.append(
+            Button(x_coord=LENGTH - 330, y_coord=HIGHT - 110, width=100, height=100, text="x0.5",
+                   color_fore=BLACK, color_back=BLACK, hover_color_fore=RED,
+                   handle_func=self.increase_zoom, coefficient=0.5))
+        self.buttons.append(
+            Button(x_coord=LENGTH - 440, y_coord=HIGHT - 110, width=100, height=100, text="x0.1",
+                   color_fore=BLACK, color_back=BLACK, hover_color_fore=RED,
+                   handle_func=self.increase_zoom, coefficient=0.1))
+
+    def increase_zoom(self, coefficient : int) -> None:
+        self.zoom *= coefficient
+
 
     def focuse_on_object(self, object : Object) -> None:
         self.focuse_obj = self.obj.index(object)
@@ -260,9 +280,9 @@ class Scene:
 
         for i, obj in enumerate(self.obj):
             focuse_pos = self.obj[self.focuse_obj].get_xy()
-            system_coord = (MIDX - focuse_pos[0] // X , MIDY - focuse_pos[1] // X)
+            system_coord = (MIDX - focuse_pos[0] // self.zoom , MIDY - focuse_pos[1] // self.zoom)
 
-            start = (obj.get_x() / X  + system_coord[0], obj.get_y() / X + system_coord[1])
+            start = (obj.get_x() / self.zoom + system_coord[0], obj.get_y() / self.zoom + system_coord[1])
             v = Vector(obj.get_velocity().x, obj.get_velocity().y)
             v.normalize()
             v = v.resize(100)
@@ -288,7 +308,7 @@ class Scene:
 
             if VERBOSE > 1:
                 for pos in obj.get_last_positions():
-                    pygame.draw.circle(surface, WHITE, (pos[0] / X + system_coord[0] , pos[1] / X + system_coord[1]), 1)
+                    pygame.draw.circle(surface, WHITE, (pos[0] // self.zoom + system_coord[0] , pos[1] // self.zoom + system_coord[1]), 1)
             if VERBOSE > 0:
                 pass
 
