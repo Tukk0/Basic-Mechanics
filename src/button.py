@@ -5,7 +5,19 @@ import config
 
 class Button():
     def __init__(self, x_coord, y_coord, width, height, text, color_fore, color_back,
-                 hover_color_fore):
+                 hover_color_fore, handle_func, **kwargs):
+        """
+        Button class
+        :param x_coord: x coordinate
+        :param y_coord: y coordinate
+        :param width: width of the button
+        :param height: height of the button
+        :param text: text of the button
+        :param color_fore: color for the
+        :param color_back: color back the
+        :param hover_color_fore: hover color
+        :param handle_func: func to be done
+        """
         self.text = text
         self.color_fore = color_fore
         self.color_back = color_back
@@ -15,7 +27,9 @@ class Button():
                                       width +
                                       config.BORDER_WIDTH * 2, height + config.BORDER_WIDTH * 2)
         self.is_hovered = False
-        self.is_active = False
+        self.is_active = True
+        self.handle_func = handle_func
+        self.kwargs = kwargs
 
     def draw(self, surface):
         current_color_fore = self.hover_color_fore if self.is_hovered else self.color_fore
@@ -31,4 +45,4 @@ class Button():
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.is_hovered and self.is_active:
-            pygame.event.post(pygame.event.Event(pygame.USEREVENT, button=self))
+            self.handle_func(**self.kwargs)

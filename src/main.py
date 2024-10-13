@@ -3,6 +3,7 @@ import time
 import pygame
 
 from config import *
+from src.button import Button
 
 VERBOSE = 2
 
@@ -48,9 +49,9 @@ class Object:
         self.img_size: int = img_size
         self.image = pygame.transform.scale(self.image, (img_size, img_size))
         self.k_energy = mass * velocity.square() / 2
-        self.p_energy : float = 0
-        self.last_positions : list[tuple[float, float]] = []
-        self.last_pos : float = 0
+        self.p_energy: float = 0
+        self.last_positions: list[tuple[float, float]] = []
+        self.last_pos: float = 0
 
     def get_mass(self) -> int:
         return self.mass
@@ -176,6 +177,22 @@ class Scene:
         # Current time
         self.time = time.time()
 
+        # Buttons
+
+        self.buttons = []
+
+        self.construct_buttons()
+
+    def construct_buttons(self) -> None:
+        for i, obj in enumerate(self.obj):
+            self.buttons.append(
+                Button(x_coord=0, y_coord= HIGHT - 110 - i * 110, width=100, height=100, text=obj.get_name(),
+                       color_fore=BLACK, color_back=BLACK, hover_color_fore=RED,
+                       handle_func=self.focuse_on_object, object=obj))
+
+    def focuse_on_object(self, object : Object) -> None:
+        print(object.get_name())
+
     def update(self, surface):
         # Create an acceleration vector for every object in the system
         accelerations_list = [Vector(0, 0) for i in range(self.system_size)]
@@ -215,7 +232,7 @@ class Scene:
         # Update total energy
         self.total_energy = sum(x.get_energy() for x in self.obj)
 
-        if time.time() - self.time > 1:
+        if time.time() - self.time > 0.1:
             self.time = time.time()
             self.draw(surface)
 
@@ -270,6 +287,9 @@ class Scene:
             if VERBOSE > 0:
                 pass
 
+        for button in self.buttons:
+            button.draw(surface)
+
         pygame.display.flip()
         pygame.display.update()
 
@@ -281,9 +301,13 @@ def main():
     keepGameRunning = True
     time = 0
     while keepGameRunning:
+        for button in scene.buttons:
+            button.check_hover(pygame.mouse.get_pos())
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 keepGameRunning = False
+            for button in scene.buttons:
+                button.handle_event(event)
         time += 1
         # print(f"{time * dt} c")
         scene.update(surface)
