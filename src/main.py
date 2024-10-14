@@ -247,7 +247,7 @@ class Scene:
                 potential_energy = -vals.G * (obj1.get_mass()) * (
                     obj2.get_mass()) / direction.length()
                 obj1.p_energy += potential_energy
-                obj2.p_energy += potential_energy
+                #obj2.p_energy = potential_energy
         # Update objects` kinetic energies
         for obj in self.obj:
             obj.k_energy = obj.get_mass() * obj.get_velocity().square() / 2
