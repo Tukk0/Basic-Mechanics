@@ -1,8 +1,8 @@
 import time
-
+from math import sqrt
 import pygame
 
-from config import *
+from config import values, vals
 from src.button import Button
 
 VERBOSE = 2
@@ -70,8 +70,8 @@ class Object:
 
     def move(self):
         self.add_position((self.x, self.y))
-        self.x += self.velocity.x * coefficient * dt
-        self.y += self.velocity.y * coefficient * dt
+        self.x += self.velocity.x * coefficient * values.dt
+        self.y += self.velocity.y * coefficient * values.dt
 
     def add_position(self, position: tuple[float, float]) -> None:
         self.last_pos += 1
@@ -82,7 +82,7 @@ class Object:
 
     def change_velocity(self, a: Vector) -> None:
         # The formula for updated velocity is v = v0 + a*dt
-        self.velocity.add(a.resize(dt))
+        self.velocity.add(a.resize(values.dt))
         # Update kinetic energy
         self.k_energy = self.mass * self.velocity.square() / 2
 
@@ -183,32 +183,59 @@ class Scene:
 
         #SYSTEM OF COORDINATES
         self.focuse_obj = 0
-        self.zoom = X
+        self.zoom = values.X
 
     def construct_buttons(self) -> None:
         for i, obj in enumerate(self.obj):
             self.buttons.append(
-                Button(x_coord=0, y_coord= HIGHT - 110 - i * 110, width=100, height=100, text=obj.get_name(),
-                       color_fore=BLACK, color_back=BLACK, hover_color_fore=RED,
+                Button(x_coord=0, y_coord= values.HIGHT - 110 - i * 110, width=100, height=100, text=obj.get_name(),
+                       color_fore=values.BLACK, color_back=values.BLACK, hover_color_fore=values.RED,
                        handle_func=self.focuse_on_object, object=obj))
-        self.buttons.append(Button(x_coord=LENGTH - 110, y_coord= HIGHT - 110, width=100, height=100, text="x10",
-                       color_fore=BLACK, color_back=BLACK, hover_color_fore=RED,
+        #ZOOM
+        self.buttons.append(Button(x_coord=values.LENGTH - 110, y_coord= values.HIGHT - 110, width=100, height=100, text="x10",
+                       color_fore=values.BLACK, color_back=values.BLACK, hover_color_fore=values.RED,
                        handle_func=self.increase_zoom, coefficient = 10))
         self.buttons.append(
-            Button(x_coord=LENGTH - 220, y_coord=HIGHT - 110, width=100, height=100, text="x2",
-                   color_fore=BLACK, color_back=BLACK, hover_color_fore=RED,
+            Button(x_coord=values.LENGTH - 220, y_coord=values.HIGHT - 110, width=100, height=100, text="x2",
+                   color_fore=values.BLACK, color_back=values.BLACK, hover_color_fore=values.RED,
                    handle_func=self.increase_zoom, coefficient=2))
         self.buttons.append(
-            Button(x_coord=LENGTH - 330, y_coord=HIGHT - 110, width=100, height=100, text="x0.5",
-                   color_fore=BLACK, color_back=BLACK, hover_color_fore=RED,
+            Button(x_coord=values.LENGTH - 330, y_coord=values.HIGHT - 110, width=100, height=100, text="x0.5",
+                   color_fore=values.BLACK, color_back=values.BLACK, hover_color_fore=values.RED,
                    handle_func=self.increase_zoom, coefficient=0.5))
         self.buttons.append(
-            Button(x_coord=LENGTH - 440, y_coord=HIGHT - 110, width=100, height=100, text="x0.1",
-                   color_fore=BLACK, color_back=BLACK, hover_color_fore=RED,
+            Button(x_coord=values.LENGTH - 440, y_coord=values.HIGHT - 110, width=100, height=100, text="x0.1",
+                   color_fore=values.BLACK, color_back=values.BLACK, hover_color_fore=values.RED,
                    handle_func=self.increase_zoom, coefficient=0.1))
+        #DT
+        self.buttons.append(
+            Button(x_coord=values.LENGTH - 110, y_coord=values.HIGHT - 220, width=100, height=100,
+                   text="x10",
+                   color_fore=values.BLACK, color_back=values.BLACK, hover_color_fore=values.RED,
+                   handle_func=self.increase_dt, coefficient=10))
+        self.buttons.append(
+            Button(x_coord=values.LENGTH - 220, y_coord=values.HIGHT - 220, width=100, height=100,
+                   text="x2",
+                   color_fore=values.BLACK, color_back=values.BLACK, hover_color_fore=values.RED,
+                   handle_func=self.increase_dt, coefficient=2))
+        self.buttons.append(
+            Button(x_coord=values.LENGTH - 330, y_coord=values.HIGHT - 220, width=100, height=100,
+                   text="x0.5",
+                   color_fore=values.BLACK, color_back=values.BLACK, hover_color_fore=values.RED,
+                   handle_func=self.increase_dt, coefficient=0.5))
+        self.buttons.append(
+            Button(x_coord=values.LENGTH - 440, y_coord=values.HIGHT - 220, width=100, height=100,
+                   text="x0.1",
+                   color_fore=values.BLACK, color_back=values.BLACK, hover_color_fore=values.RED,
+                   handle_func=self.increase_dt, coefficient=0.1))
+
+
 
     def increase_zoom(self, coefficient : int) -> None:
         self.zoom *= coefficient
+
+    def increase_dt(self, coefficient : int) -> None:
+        values.dt *= coefficient
 
 
     def focuse_on_object(self, object : Object) -> None:
@@ -263,8 +290,8 @@ class Scene:
 
         # Add textual information onto the screen
         def draw_text(surface, text, position, align="midleft"):
-            text_skin = pygame.font.SysFont('Comic Sans MS', TEXT_SIZE).render(text, False,
-                                                                               TEXT_COLOR)
+            text_skin = pygame.font.SysFont('Comic Sans MS', values.TEXT_SIZE).render(text, False,
+                                                                               values.TEXT_COLOR)
             text_rect = text_skin.get_rect(center=position)
             if align == "midleft":
                 text_rect = text_skin.get_rect(midleft=position)
@@ -278,9 +305,16 @@ class Scene:
 
         image = pygame.image.load("empty.png").convert_alpha()
 
+        draw_text(surface,
+                  f"DT: {values.dt}",
+                  (values.LENGTH - 550,values.HIGHT - 160))
+        draw_text(surface,
+                  f"ZOOM: {self.zoom}",
+                  (values.LENGTH - 550, values.HIGHT - 60))
+
         for i, obj in enumerate(self.obj):
             focuse_pos = self.obj[self.focuse_obj].get_xy()
-            system_coord = (MIDX - focuse_pos[0] // self.zoom , MIDY - focuse_pos[1] // self.zoom)
+            system_coord = (values.MIDX - focuse_pos[0] // self.zoom , values.MIDY - focuse_pos[1] // self.zoom)
 
             start = (obj.get_x() / self.zoom + system_coord[0], obj.get_y() / self.zoom + system_coord[1])
             v = Vector(obj.get_velocity().x, obj.get_velocity().y)
@@ -292,7 +326,7 @@ class Scene:
                 draw_object(surface, obj, start[0], start[1])
                 draw_text(surface,
                           f"Speed of {obj.get_name()} : {round(obj.velocity.length(), 0)} м/s",
-                          (LENGTH - 370, (i + 1) * 50))
+                          (values.LENGTH - 370, (i + 1) * 50))
                 # draw_text(surface, f"Energy : {self.total_energy} J", (50, (LENGTH - 370, 4 * 50)))
                 draw_text(surface, f"{obj.get_name()}", (start[0], start[1] - obj.get_size() + 20),
                           align="center")
@@ -304,11 +338,11 @@ class Scene:
                               (50, (1 + self.system_size) * 50))
 
             if VERBOSE > 0:
-                pygame.draw.line(surface, GREEN, start, [v.x, v.y])
+                pygame.draw.line(surface, values.GREEN, start, [v.x, v.y])
 
             if VERBOSE > 1:
                 for pos in obj.get_last_positions():
-                    pygame.draw.circle(surface, WHITE, (pos[0] // self.zoom + system_coord[0] , pos[1] // self.zoom + system_coord[1]), 1)
+                    pygame.draw.circle(surface, values.WHITE, (pos[0] // self.zoom + system_coord[0] , pos[1] // self.zoom + system_coord[1]), 1)
             if VERBOSE > 0:
                 pass
 
@@ -321,7 +355,7 @@ class Scene:
 
 def main():
     pygame.init()
-    surface: pygame.display = pygame.display.set_mode((LENGTH, HIGHT))
+    surface: pygame.display = pygame.display.set_mode((values.LENGTH, values.HIGHT))
     scene = Scene()
     keepGameRunning = True
     time = 0

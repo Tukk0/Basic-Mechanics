@@ -23,9 +23,9 @@ class Button():
         self.color_back = color_back
         self.hover_color_fore = hover_color_fore
         self.image_fore = pygame.Rect(x_coord, y_coord, width, height)
-        self.image_back = pygame.Rect(x_coord - config.BORDER_WIDTH, y_coord - config.BORDER_WIDTH,
+        self.image_back = pygame.Rect(x_coord - config.values.BORDER_WIDTH, y_coord - config.values.BORDER_WIDTH,
                                       width +
-                                      config.BORDER_WIDTH * 2, height + config.BORDER_WIDTH * 2)
+                                      config.values.BORDER_WIDTH * 2, height + config.values.BORDER_WIDTH * 2)
         self.is_hovered = False
         self.is_active = True
         self.handle_func = handle_func
